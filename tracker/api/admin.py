@@ -1,8 +1,13 @@
 from django.contrib import admin
 
-from tracker.api.models import UserLocation
+from tracker.api.models import ChildLocation, Child
 
 
-class UserLocationAdmin(admin.ModelAdmin):
-    list_display = ('user', 'lat', 'lng', 'created_at')
-admin.site.register(UserLocation, UserLocationAdmin)
+class ChildLocationAdmin(admin.ModelAdmin):
+    list_display = ('child', 'lat', 'lng', 'created_at')
+admin.site.register(ChildLocation, ChildLocationAdmin)
+
+
+class ChildAdmin(admin.ModelAdmin):
+    list_display = ('name', 'parent', 'created_at')
+admin.site.register(Child, ChildAdmin)

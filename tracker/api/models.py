@@ -3,12 +3,32 @@ from django.contrib.auth.models import User
 from decimal import Decimal
 
 
+class Child(models.Model):
+    """
+    Model for storing a child's info of a user
 
-class UserLocation(models.Model):
+    Basically a parent user will signup, and add a child/children,
+    with one to many relation. 
+    
+    Children are not allowed to signup/login
+    """
+    class Meta:
+        verbose_name_plural = "children"
+
+    parent = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+
+class ChildLocation(models.Model):
     """
     Model for storing user location at given timestamp
     """
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    child = models.ForeignKey(Child, on_delete=models.CASCADE)
 
     # NOTE
     # quick geography tips !!!
@@ -21,4 +41,6 @@ class UserLocation(models.Model):
 
 
     def __str__(self):
-        return 'UserLocation: (' + str(Decimal(self.lat)) + ', ' + str(Decimal(self.lng)) + ')'
+        return 'ChildLocation: (' + str(Decimal(self.lat)) + ', ' + str(Decimal(self.lng)) + ')'
+
+

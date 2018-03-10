@@ -17,6 +17,7 @@ class Child(models.Model):
 
     parent = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=64, unique=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -36,11 +37,32 @@ class ChildLocation(models.Model):
     # max lat 90 and max lng 180
     lat = models.DecimalField(max_digits=9, decimal_places=6)
     lng = models.DecimalField(max_digits=9, decimal_places=6)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 
     def __str__(self):
         return 'ChildLocation: (' + str(Decimal(self.lat)) + ', ' + str(Decimal(self.lng)) + ')'
+
+
+class ChildDevice(models.Model):
+    """
+    Model for storing child's gadget - phone, tablet etc.
+    """
+    child = models.ForeignKey(Child, on_delete=models.CASCADE)
+
+    # name iPhone 5s, Samsung Note 3 etc.
+    name = models.CharField(max_length=64)
+
+    # operating system iOS, Android etc.
+    os = models.CharField(max_length=64)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+    def __str__(self):
+        return self.name
 
 

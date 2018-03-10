@@ -1,3 +1,9 @@
 $ curl -H 'Accept: application/json; indent=4' -u admin:admin123 http://127.0.0.1:8000/api/users/
 $ curl -H 'Accept: application/json; indent=4' -u admin:admin123 http://127.0.0.1:8000/api/children/
 $ curl -H 'Accept: application/json; indent=4' -u navi:navi1234 http://127.0.0.1:8000/api/children/
+
+
+$ curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "username=tomy&email=tomy@gmail.com&password=tomy1234" http://127.0.0.1:8000/api/users/
+$ curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "name=aryan&parent=3" http://127.0.0.1:8000/api/children/
+
+$ curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -d "username=tomy&password=tomy1234" http://127.0.0.1:8000/api/auth/login/

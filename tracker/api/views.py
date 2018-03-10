@@ -3,7 +3,8 @@ from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 
-from tracker.api.serializers import UserSerializer, GroupSerializer
+from tracker.api.models import Child, ChildLocation, ChildDevice
+from tracker.api.serializers import UserSerializer, GroupSerializer, ChildSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -20,3 +21,11 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+
+
+class ChildViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows children to be viewed or edited.
+    """
+    queryset = Child.objects.all().order_by('-created_at')
+    serializer_class = ChildSerializer

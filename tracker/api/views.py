@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets
 
 from tracker.api.models import Child, ChildLocation, ChildDevice
@@ -17,6 +17,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
+from rest_framework.renderers import JSONRenderer
 
 
 @csrf_exempt
@@ -72,3 +73,10 @@ class ChildViewSet(viewsets.ModelViewSet):
             resp['success'] = False
             resp['msg'] = 'Failed to create child'
         return HttpResponse(json.dumps(resp), content_type="application/json")
+
+    def list(self, request):
+        # only get childer for given parent
+        # i.e. authenticated/logged-in user
+        children = Child.objects.filter(parent=request.user)
+        serializer = ChildSerializer(children, many=True)
+        return JsonResponse(serializer.data, safe=False)

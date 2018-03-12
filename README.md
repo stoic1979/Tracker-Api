@@ -7,3 +7,6 @@ Tracker APIs in django, postgresql and django rest framework
 
 # Heroku Deployment
     $ heroku config:set DISABLE_COLLECTSTATIC=0 -a <heroku-app-name>
+    $ heroku run python manage.py makemigrations -a <heroku-app-name>
+    $ heroku run python manage.py migrate -a <heroku-app-name>
+    $ heroku run python manage.py createsuperuser -a <heroku-app-name>

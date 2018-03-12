@@ -60,3 +60,15 @@ class ChildViewSet(viewsets.ModelViewSet):
     queryset = Child.objects.all().order_by('-created_at')
     serializer_class = ChildSerializer
 
+    def create(self, request):
+        resp = {'success': True}
+        name = request.POST['name']
+        child = Child(parent=request.user, name=name)
+        child.save()
+        if child:
+            resp['msg'] = 'Child added successfully'
+            resp['child_id'] = child.id
+        else:
+            resp['success'] = False
+            resp['msg'] = 'Failed to create child'
+        return HttpResponse(json.dumps(resp), content_type="application/json")

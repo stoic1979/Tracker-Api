@@ -11,6 +11,5 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^login/', views.login),
     url(r'^signup/', views.signup),
-    #url(r'^$', views.UserCreate.as_view(), name='account-create'),
     #url(r'^auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

@@ -6,12 +6,17 @@ from django.http import HttpResponse
 from rest_framework import viewsets
 
 from tracker.api.models import Child, ChildLocation, ChildDevice
-from tracker.api.serializers import UserSerializer, GroupSerializer, ChildSerializer
+from tracker.api.serializers import UserSerializer,GroupSerializer, ChildSerializer
 
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
 import json
 
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.authtoken.models import Token
 
 @csrf_exempt
 def login(request):
@@ -29,12 +34,30 @@ def login(request):
     return HttpResponse(json.dumps(resp), content_type="application/json")
 
 
-class UserViewSet(viewsets.ModelViewSet):
+# class UserViewSet(viewsets.ModelViewSet):
+#     """
+#     API endpoint that allows users to be viewed or edited.
+#     """
+#     queryset = User.objects.all().order_by('-date_joined')
+#     serializer_class = UserSerializer
+
+
+class UserCreate(APIView):
+    """ 
+    Creates the user. 
     """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
+    @csrf_exempt
+    def post(self, request, format='json'):
+        serializer = UserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            if user:
+                token = Token.objects.create(user=user)
+                json = serializer.data
+                json['token'] = token.key
+                return Response(json, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GroupViewSet(viewsets.ModelViewSet):

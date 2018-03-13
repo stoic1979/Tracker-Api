@@ -10,6 +10,7 @@ from tracker.api.serializers import ChildSerializer
 
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.hashers import make_password
 import json
 
 
@@ -41,7 +42,7 @@ def signup(request):
     username = request.POST['username']
     password = request.POST['password']
     email = request.POST['email']
-    user = User(username=username, password=password, email=email)
+    user = User(username=username, password=make_password(password), email=email)
     user.save()
     resp = {'success': True}
     if user:

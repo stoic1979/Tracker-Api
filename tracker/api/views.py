@@ -39,19 +39,24 @@ def login(request):
 
 @csrf_exempt
 def signup(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    email = request.POST['email']
-    user = User(username=username, password=make_password(password), email=email)
-    user.save()
     resp = {'success': True}
-    if user:
-        token, status = Token.objects.get_or_create(user=user)
-        resp['token'] = token.key
-        resp['msg'] = 'Registration successful'
-    else:
+    try:
+        username = request.POST['username']
+        password = request.POST['password']
+        email = request.POST['email']
+        user = User(username=username, password=make_password(password), email=email)
+        user.save()
+        if user:
+            token, status = Token.objects.get_or_create(user=user)
+            resp['token'] = token.key
+            resp['msg'] = 'Registration successful'
+        else:
+            resp['success'] = False
+            resp['msg'] = 'Registration failed'
+    except Exception as exp:
         resp['success'] = False
-        resp['msg'] = 'Registration failed'
+        resp['msg'] = 'Registration failed, exception: %s' % exp
+
     return HttpResponse(json.dumps(resp), content_type="application/json")
 
 

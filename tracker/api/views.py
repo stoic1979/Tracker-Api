@@ -64,12 +64,10 @@ class ChildViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows children to be viewed or edited.
     """
-    print("----ChildViewSet----")
     queryset = Child.objects.all().order_by('-created_at')
     serializer_class = ChildSerializer
 
     def create(self, request):
-        print("----ChildViewSet----")
         resp = {'success': True}
         name = request.POST['name']
         child = Child(parent=request.user, name=name)
@@ -91,8 +89,26 @@ class ChildViewSet(viewsets.ModelViewSet):
 
 
 class ChildLocationViewSet(viewsets.ModelViewSet):
-    queryset = Child.objects.all().order_by('created_at')
+    queryset = ChildLocation.objects.all().order_by('created_at')
     serializer_class = ChildLocationSerializer
-      
 
-  
+    def retrieve(self, request, pk=None):
+        resp = {'success': True}
+        try:
+            child = Child.objects.get(pk=pk)
+
+            # NOTE
+            # we will provide child location to his/her parent only
+            if child.parent == request.user:
+                child_locations = ChildLocation.objects.filter(child=child)
+                serializer = ChildLocationSerializer(child_locations, many=True)
+                resp["locations"] = serializer.data
+                return JsonResponse(resp, safe=False)
+            else:
+                resp["success"] = False
+                resp["msg"] = "Invalid parent"
+                return HttpResponse(json.dumps(resp), content_type="application/json")
+        except Child.DoesNotExist as exp:
+            resp["success"] = False
+            resp["msg"] = "Child not found"
+            return HttpResponse(json.dumps(resp), content_type="application/json")

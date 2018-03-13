@@ -4,7 +4,7 @@ from tracker.api import views
 
 router = routers.DefaultRouter()
 router.register(r'children', views.ChildViewSet)
-router.register(r'location',views.ChildLocationViewSet)
+router.register(r'child_location', views.ChildLocationViewSet)
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.

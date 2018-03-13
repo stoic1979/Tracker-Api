@@ -112,3 +112,26 @@ class ChildLocationViewSet(viewsets.ModelViewSet):
             resp["success"] = False
             resp["msg"] = "Child not found"
             return HttpResponse(json.dumps(resp), content_type="application/json")
+
+    def create(self, request):
+        resp = {'success': True}
+        pk = int(request.POST['child_id'])
+        lat = request.POST['lat']
+        lng = request.POST['lng']
+        try:
+            child = Child.objects.get(pk=pk)
+
+            # NOTE
+            # only parent's authorized app can add child's location
+            if child.parent == request.user:
+                child_location = ChildLocation(child=child, lat=lat, lng=lng)
+                child_location.save()
+                return JsonResponse(resp, safe=False)
+            else:
+                resp["success"] = False
+                resp["msg"] = "Cant add child location as parent is invalid"
+                return HttpResponse(json.dumps(resp), content_type="application/json")
+        except Child.DoesNotExist as exp:
+            resp["success"] = False
+            resp["msg"] = "Child not found"
+            return HttpResponse(json.dumps(resp), content_type="application/json")

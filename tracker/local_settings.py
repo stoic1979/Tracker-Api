@@ -1,4 +1,3 @@
-"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -9,5 +8,4 @@ DATABASES = {
         'PORT': '',
     }
 }
-"""
 print ("Local Settings loaded... ")

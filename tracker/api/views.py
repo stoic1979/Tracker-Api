@@ -6,14 +6,14 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets
 
 from tracker.api.models import Child, ChildLocation, ChildDevice
-from tracker.api.serializers import ChildSerializer
+from tracker.api.serializers import ChildSerializer, ChildLocationSerializer
 
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.hashers import make_password
 import json
 
-
+from rest_framework import serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -64,10 +64,12 @@ class ChildViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows children to be viewed or edited.
     """
+    print("----ChildViewSet----")
     queryset = Child.objects.all().order_by('-created_at')
     serializer_class = ChildSerializer
 
     def create(self, request):
+        print("----ChildViewSet----")
         resp = {'success': True}
         name = request.POST['name']
         child = Child(parent=request.user, name=name)
@@ -86,3 +88,11 @@ class ChildViewSet(viewsets.ModelViewSet):
         children = Child.objects.filter(parent=request.user)
         serializer = ChildSerializer(children, many=True)
         return JsonResponse(serializer.data, safe=False)
+
+
+class ChildLocationViewSet(viewsets.ModelViewSet):
+    queryset = Child.objects.all().order_by('created_at')
+    serializer_class = ChildLocationSerializer
+      
+
+  

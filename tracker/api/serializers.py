@@ -9,3 +9,9 @@ class ChildSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Child
         fields = ('id', 'name', 'created_at')
+
+
+class ChildLocationSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Child
+        fields = ('id', 'lat', 'lng','created_at')

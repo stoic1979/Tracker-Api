@@ -6,7 +6,7 @@ from django.http import HttpResponse, JsonResponse
 from rest_framework import viewsets
 
 from tracker.api.models import Child, ChildLocation, ChildDevice
-from tracker.api.serializers import ChildSerializer, ChildLocationSerializer
+from tracker.api.serializers import ChildSerializer, ChildLocationSerializer,ChildDeviceSerializer
 
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
@@ -19,6 +19,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.renderers import JSONRenderer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import permissions
 
 
 @csrf_exempt
@@ -104,7 +106,7 @@ class ChildLocationViewSet(viewsets.ModelViewSet):
                 serializer = ChildLocationSerializer(child_locations, many=True)
                 resp["locations"] = serializer.data
                 return JsonResponse(resp, safe=False)
-            else:
+            else: 
                 resp["success"] = False
                 resp["msg"] = "Invalid parent"
                 return HttpResponse(json.dumps(resp), content_type="application/json")
@@ -135,3 +137,46 @@ class ChildLocationViewSet(viewsets.ModelViewSet):
             resp["success"] = False
             resp["msg"] = "Child not found"
             return HttpResponse(json.dumps(resp), content_type="application/json")
+
+class ChildDeviceViewSet(viewsets.ModelViewSet):
+    queryset = ChildDevice.objects.all().order_by('created_at')
+    serializer_class = ChildDeviceSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def retrieve(self, request, pk=None):
+        resp = {'success': True}
+        try:
+            child = Child.objects.get(pk=pk)
+            if child.parent == request.user:
+                child_locations = ChildDevice.objects.filter(child=child)
+                serializer = ChildDeviceSerializer(child_locations, many=True)
+                resp["Devices"] = serializer.data
+                return JsonResponse(resp, safe=False)
+            else:
+                resp["success"] = False
+                resp["msg"] = "Invalid parent"
+                return HttpResponse(json.dumps(resp), content_type="application/json")
+        except Child.DoesNotExist as exp:
+            resp["success"] = False
+            resp["msg"] = "Child not found"
+        return HttpResponse(json.dumps(resp), content_type="application/json")
+
+    def create(self, request):
+        resp = {'success': True}
+        pk = int(request.POST['child_id'])
+        name = request.POST['name']
+        os = request.POST['os']
+        try:
+            child = Child.objects.get(pk=pk)
+            if child.parent == request.user:
+                child_device= ChildDevice(child=child, name=name, os=os)
+                child_device.save()
+                return JsonResponse(resp, safe=False)
+            else:
+                resp["success"] = False
+                resp["msg"] = "Can't add child Device as parent is invalid"
+                return HttpResponse(json.dumps(resp), content_type="application/json")
+        except Child.DoesNotExist as exp:
+            resp["success"] = False
+            resp["msg"] = "Child not found"
+        return HttpResponse(json.dumps(resp), content_type="application/json")

@@ -15,3 +15,8 @@ class ChildLocationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ChildLocation
         fields = ('id', 'lat', 'lng','created_at')
+
+class ChildDeviceSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ChildDevice
+        fields = ('id', 'name', 'os','created_at')

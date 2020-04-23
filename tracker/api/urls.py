@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.urls import path, include
 from rest_framework import routers
 from tracker.api import views
 
@@ -10,7 +10,7 @@ router.register(r'child_device', views.ChildDeviceViewSet)
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    url(r'^', include(router.urls)),
-    url(r'^login/', views.login),
-    url(r'^signup/', views.signup),
+    path('', include(router.urls)),
+    path('login/', views.login),
+    path('signup/', views.signup),
 ]
